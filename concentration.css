@@ -307,13 +307,15 @@ input[type='submit']:hover,
    
    
 #scoreboard h2 { 
-	font-weight:600; font-size:1em;
+	font-weight:300; font-size:1em;
 	width:133px; height:19px; 
 	padding:6px;
 	text-align:center; 
 	text-transform:uppercase;
-	background:#000; color:#FFF;
+	background:#000; color:#EEE;
 	}
+	
+#scoreboard h2.current  {font-weight:600;color:#FFF; }
 
 	
 #p0 h2 { margin:9px 0 3px 3px;}

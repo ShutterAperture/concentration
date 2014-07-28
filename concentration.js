@@ -46,7 +46,7 @@ if (document.getElementById && document.createElement)
 		var matchcount = 0; //Number of pieces matched. Used to find end of game.			
 		
 		var prizeCount = [0,0]//Number of prizes each player has in their rack.
-		
+		var $nameplates // holds references to the scoreboard names
 		
 		
 		// Facilitate using the query string
@@ -77,7 +77,7 @@ if (document.getElementById && document.createElement)
 			puzzleArray[4] = {img:"pzzl007.gif", 	explanation:"The + Fan + Ton + M + Off + The + Up + Rah",	answer:"The Phantom of the Opera"}
 		
 		//raw lists of prizes		
-		var coolPrizes = ['Jewelry','Washer/Dryer','Hair Dryer','Wallet','Year of HBO','Shopping Spree','Disney World Trip','15\" MacBook Pro','Trip to Bonaire','Recliner','Dinette Set','Honda VFR 750','Sofa','CamCorder','Home Theater','Digital SLR','Kayak','Surf Board','Media Center','Motor Home','iPod Touch','Snowmobile','Jet Ski','Sailboat','Scuba Equipment','iPad','Kindle', 'Cannondale Bicycle','Television','Green House','iTunes Gift Card','Snowblower','SUP','Flowers','Hat','Linens','Artist Supplies']
+		var coolPrizes = ['Jewelry','Washer/Dryer','Hair Dryer','Wallet','Year of HBO','Shopping Spree','Disney World Trip','15\" MacBook Pro','Trip to Bonaire','Recliner','Dinette Set','Sport Touring Motorcycle','Sofa','CamCorder','Home Theater','Digital SLR','Kayak','Surf Board','Media Center','Motor Home','iPod Touch','Snowmobile','Jet Ski','Sailboat','Scuba Equipment','iPad','Kindle', 'Cannondale Bicycle','Television','Green House','iTunes Gift Card','Snowblower','Stand Up Paddleboard','Flowers','Hat','Linens','Artist Supplies']
 		var gagPrizes = ['Watermelon','Razor','Kleenex','Lemon','Socks','Paint Brush','Compost','Penny for Thoughts','Sea Shell','Trunk of Junk','Tub of Lard']
 		var utilPrizes = ['Take','Forfeit','Forfeit','Forfeit','Wild']
 					
@@ -279,6 +279,7 @@ if (document.getElementById && document.createElement)
 								playeridx = (playeridx == 0)? 1:0;
 								var timedMsg = function(){$message.text(Players[playeridx] + ', your turn.')}
 								var y = setTimeout(timedMsg,responseInterval)
+								$nameplates.toggleClass('current')
 							}
 						else {$message.text('Try Again.')}
 					}
@@ -532,8 +533,9 @@ if (document.getElementById && document.createElement)
 				
 				
 				//initialize the scoreboard
-			   var parentdiv,$parentdiv,namediv,nametext,plist
-			   var $scoreboard = $('#scoreboard')	
+			   var parentdiv,$parentdiv,namediv,nametext,plist,heading
+			   var $scoreboard = $('#scoreboard')
+			   
 			   
 			   if(!replay) //on initial play, set up scoreboard
 				{
@@ -549,12 +551,17 @@ if (document.getElementById && document.createElement)
 										$parentdiv.append('<h2>' + Players[i] + '</h2>')
 										$('#pickPlayer' + i).val(Players[i])
 									 }
-								else {$parentdiv.append('<h2>Prizes</h2>')}
+								else 
+									{
+										$parentdiv.append('<h2>Prizes</h2>')
+									}
 								plist =  document.createElement('UL');//generate the lists for the prizes, put them in an array for easy reference, and add them to the DOM
 								prizelists[i] = $(plist)
 								$parentdiv.append(plist)
 								if(singleMode) {$scoreboard.addClass('single')} // TODO : Adjust, use vars							
 							}	
+						$nameplates = $('#scoreboard h2') //Global, set of names
+						$nameplates.eq(0).addClass("current")
 				}
 			   
 				
