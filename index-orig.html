@@ -1,0 +1,632 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<title>Concentration</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="generator" content="BBEdit 8.2">
+	<style type="text/css">
+	
+	    #playerform {width:70%; border:1px solid #e5e5e5; padding:12px; margin:20px auto}
+	    #playerform div {margin:8px}
+	    #playerform label {float:left; text-align:right; width:45%; background#e5e5e5; font:bold 1em Tahoma,Geneva,sans-serif;padding-right:5px}
+	    #playerform input {border:1px solid #999}
+	    #playerform input:focus {border-color: #000}
+	    #playerform #playersubmit, .submit, #solution{border:3px solid #EDD118; background:#A95543; color:#FFF}
+	    
+		.number, .prize, .grid {border:1px solid #000; position:absolute;			
+			width:98px; height:63px; text-align:center}
+		.transfer {font: 22px Impact,Arial,Geneva,sans-serif}
+		
+		.wildcard {display:block; height:63px; width:98px; background:#FFF url(images/wcbg.gif) no-repeat center center; text-indent:-5000px}
+		
+		
+			
+	   .number {z-index:10; /*opacity:.75;*/
+			background:#DB0000 url(images/numbertile2.gif) no-repeat; color:#FFF;
+			font: normal 25px/60px Impact,Geneva,sans-serif;
+			cursor:pointer}
+			
+		.prize {z-index:5;
+			background:#f8f8f8 ; color:#000; text-transform:uppercase;
+			font: 15px Impact,Arial,Geneva,sans-serif;}
+			
+		.prizeinner {display:table-cell; vertical-align:middle; height:55px;text-align:center;width:90px;padding:4px}
+			
+	   .grid {z-index:1; background:none}
+			
+	   
+		#gamearea {width:60%; float:left; display:none;}
+		
+		#contestants {width:40%; float:right;display:none;}
+			
+			
+	   #gameboard{position:relative; border:1px solid #000;
+	   	margin:80px auto 30px; width:500px; height:390px}
+	   	
+	   #rebus {position:absolute;top:0;left:0; z-index:0; margin:0 0 0 0;width:500px; height:390px; display:none}
+	   
+	   #message, #explanation {font:bold 14px Arial,Geneva,sans-serif;width:500px;margin:auto;text-align:center}
+	   	
+	   #puzzleform {width:500px; margin: 0 auto; display:none}
+	   
+	   #scoreboard {width:330px; height:392px; margin:80px auto; padding:0 15px;
+	   	background:#F9E76E url(images/scoreboardbg2.gif) no-repeat}
+	   	
+	   .playerprizes{float:right;width:50%; margin:0}
+	   #p0 {float:left;}
+	   
+	   
+	   #scoreboard h2 { font:bold 18px Times, 'Times New Roman', serif;
+	   	width:107px; height:19px; padding:6px;
+	   	text-align:center; text-transform:uppercase;
+	   	background:#000; color:#FFF}
+	   	
+	   #p0 h2 { margin:9px 0 3px 29px;}
+	   #p1 h2{ margin:9px 0 3px 18px;}
+	   
+	   .playerprizes ul {padding:0;
+	      width:119px;
+	   	list-style-type:none;}
+	   	
+	   #p0 ul { margin:5px 0 0 29px;}
+	   #p1 ul{ margin:5px 0 0 17px;}
+	   
+	   .playerprizes ul li{margin:0 0 3px; padding:5px 2px;overflow:hidden; height:15px;
+	   	font:bold 12px Trebuchet,Geneva,sans-serif; text-align:center; letter-spacing:-.075em;
+	   	background:#FFF; color:#000; cursor:pointer;
+	   	white-space:nowrap;text-transform:uppercase}
+	   	
+	   
+	
+	</style>
+
+</head>
+<body>
+  <form id="playerform" action="index.html" method="post" name="playerform">
+  	<div>
+  		<label for="player1name">Player 1 Name</label>
+  		<input type="text" name="player1name" id="player1name" size="20" maxlength="20" tabindex="1">
+  	</div>
+  	<div>
+  		<label for="player2name">Player 2 Name</label>
+  		<input type="text" name="player2name" id="player2name" size="20" maxlength="20" tabindex="2">  		
+  	</div>
+  	<div>
+  		<input type="submit" name="playersubmit" id="playersubmit" value ="Play Game">  		
+  	</div>
+
+  
+  </form>
+
+  <div id="gamearea">
+	<div id="gameboard">
+		<img id="rebus" src="" alt="" width="498" height="358">
+	</div>
+	
+	<p id="message">&nbsp;</p>
+	
+	<form name="puzzleform" id="puzzleform" method="get" action="index.html">
+	  <div>		
+		<input type="text" name="solution" id="solution" size="60">	
+		<input type="submit" value="OK" class="submit">		
+		<input type="submit" value="No" class="submit">
+	</div>
+	</form>
+	<p id="explanation">&nbsp;</p>
+  </div><!-- end, game board area -->
+  <div id="contestants">
+  <div id="scoreboard">
+  	<div id="p0" class="playerprizes"></div>
+  	<div id="p1" class="playerprizes"></div>
+  </div><!-- end, scoreboard -->
+  </div><!-- end, contestants area -->
+
+ 
+
+<script type="text/javascript">
+	if (document.getElementById && document.createElement)
+		{
+			// *** Global Variables ***********************************************			
+			var tileLeft,tileTop,temp,tileTimeout //establishing
+			var tileCurrentWidth = 98; var tileDefaultWidth = 98; //CSS widths. Used for animation (not in use)
+			var tileIncrement = 10; //used for animation; not in use
+			
+			var adjTileWidth = 100; var adjTileHeight = 65; //dimensions including borders; used to calculate positions
+			var numRows = 6; var numCols = 5; //could be altered to change number of tiles, dimensions would need adjusting			
+			
+			var tileInterval = 10000; //timer used for tile animation; currently unused
+			var responseInterval = 400; //how long to wait before changing message
+			var tilePair = new Array();//used to hold and test two choices
+			var compareInterval = 980;//time to wait after showing the second tile
+			
+			var suppress = false; //used to suppress picking additional tiles. Set to true when second tile is picked; cleared on mismatch,or response to solution request
+			var doubleWild =false //flag to indicate matching Wild Cards
+			
+			//DOM references
+			var container = document.getElementById('gameboard')
+			var formDOMref = document.getElementById('puzzleform');
+			var rebus = document.getElementById('rebus')
+			var message = document.getElementById('message')			
+			
+			//Level 0 references to forms
+			var formref = document.puzzleform; //Level 0 reference to solution form
+			var playerform = document.playerform //player names
+			
+			var puzzleCount = 0
+			
+			var playeridx = 0 //holds index number of current player
+			var otheridx = 1 //holds index number of opponent
+			
+			var Players = new Array() //array to hold player names
+			var prizelists = new Array();//array to hold DOM references to ULs that hold prizes
+			var transferState = null //used to indicate a take or forfeit state. Null otherwise
+			var matchcount = 0; //Number of pieces matched. Used to find end of game.			
+			
+			var prizeCount = [0,0]//Number of prizes each player has in their rack.
+			
+			//raw list of puzzles
+			var puzzleArray = new Array(); //enumerating elements separately for easier updates.
+			   //format is array literal: 0 = puzzle image file name, 1 = explanation of solution, 2 = solution
+				puzzleArray[0] = ["pzzl129.gif","Eye + Toe + Juice + Hoe","I told you so"]
+				puzzleArray[1] =["pzzl125c.jpg","An + Off + Oar + U + Can + Tree + Fuse","An offer you can\'t refuse"]
+				puzzleArray[2] =["pzzl003.gif","Hat + Bee + N + Hoo + Y + Ear","Happy New Year"]
+				puzzleArray[3] =["pzzl004.gif","SP + Ace, The F + Eye + N + Awl + Fr + ON + T + Ear","Space, the final frontier"]
+			
+			//raw list of prizes
+			//var rawPrizeArray = ['15\" MacBook Pro','DVD Player','HD TV','Trip to Bonaire','Recliner','Crummy Old Dell','Honda VFR 750','Take','Forfeit','Home Theater','Digital SLR','Kayak','Surf Board','Paint Brush','Motor Home','iPod 60 GB','Watermelon'];
+			var coolPrizes = ['Jewelry','Washer/Dryer','Shopping Spree','Disney World Trip','15\" MacBook Pro','Trip to Bonaire','Recliner','Dinette Set','Honda VFR 750','Sofa','CamCorder','Home Theater','Digital SLR','Kayak','Surf Board','Media Center','Motor Home','iPod Touch','Snowmobile','Jet Ski','Sailboat','Scuba Equipment','iPad','Kindle', 'Cannondale Bicycle']
+			var gagPrizes = ['Watermelon','Razor','Crummy Old Dell','Lemon','Socks','Paint Brush']
+			var utilPrizes = ['Take','Forfeit','Wild']
+			
+			
+			
+			//array used to randomize the prizes;
+			var prizeArray = new Array(); var curridx;
+			
+			// *** END: Global Variables ******************************************
+			
+			
+			//function to sort the an array containing objects with a rand property
+			function sortObjects(a,b)
+				{
+					return a.rand - b.rand
+				}
+				
+		   //function to set the message content
+		   function setMessage(content)
+		   	{
+		   		message.firstChild.nodeValue = content;
+		   	}
+		   	
+		   	
+		  
+		   
+			//constructor function for puzzle objects	
+		   function Puzzle(imagefile,explanation,solution)
+		   	{
+		   		this.src = 'rebus/' + imagefile;
+		   		this.explanation = explanation;
+		   		this.solution = solution;
+		   		this.compareString = solution.replace(/\W/gi,'')
+		   		this.compareString = this.compareString.toLowerCase();		   		
+		   		this.rand = Math.random();
+		   	}
+		   	
+		   
+		   	
+		    var finalPuzzleArray = new Array();
+		    for (var pz = 0 ; pz < puzzleArray.length; pz++)
+		    	{
+		    		finalPuzzleArray[pz] = new Puzzle(puzzleArray[pz][0],puzzleArray[pz][1],puzzleArray[pz][2])		    		
+		    	}
+		    	
+		    //sort the puzzle array by the rand property of each puzzle 	
+			 finalPuzzleArray.sort(sortObjects);
+			 
+			 var thisPuzzle = finalPuzzleArray[puzzleCount]
+			 rebus.src = thisPuzzle.src
+			
+			
+			//**** Prize functions ************************************************
+			
+			//constructor function for Prize object;  each object holds a prizename and a random number.
+			function prizeObject(prizename)
+				{
+					this.prizename = prizename;
+					this.rand = Math.random()
+				}
+				
+			
+			
+			 //function to add prize to scoreboard
+		   function addPrize(prizeText)
+		   	{
+		   		var parentUL = prizelists[playeridx];
+		   		var newLI = document.createElement('LI');
+		   		var liText = document.createTextNode(prizeText);
+		   		newLI.onclick = transferPrize;
+		   		newLI.appendChild(liText);
+		   		parentUL.appendChild(newLI);
+		   		prizeCount[playeridx]++;
+		   	}
+		   	
+		    //function to faciliate taking and forfeiting gifts
+		    function transferPrize()
+		    	{
+		    		if ((transferState == 'Take' && this.parentidx == playeridx) || (transferState == 'Forfeit' && this.parentidx == otheridx)) {transferState = null}
+		    		if (transferState == null) {return false}
+		    		else
+		    			{
+		    				idxToUse = (transferState == 'Take') ? playeridx :otheridx;
+		    				oppositeidx = (transferState == 'Take') ? otheridx :playeridx;
+		    				
+		    				prizeCount[idxToUse]++;
+		    				prizeCount[oppositeidx]--;
+		    				
+		    			   prizelists[idxToUse].appendChild(this);
+		    			   transferState = null;
+		    			   
+		    			   setMessage('Can you tell us what the puzzle says?');
+		    			}
+		    	}
+			
+			//**** END: Prize functions ************************************************
+			
+			
+			
+			
+			//function to hide tiles with an effect; doesn't work yet. Bypassed
+			function hideTileX()
+				{
+					
+					if (tileCurrentWidth > 0)
+						{
+							//alert(tileCurrentWidth);
+							this.style.width = tileCurrentWidth + 'px'
+							tileCurrentWidth = tileCurrentWidth - tileIncrement;
+							tileTimeout = setTimeout("hideTile.call(this)",tileInterval)
+							
+						}
+					else
+						{
+							tileCurrentWidth = tileDefaultWidth;
+							//this.style.display = 'none'
+							clearTimeout(tileTimeout)
+						}
+				}
+				
+			
+			function hideTile()
+				{
+					if (suppress) return;
+					this.style.display = 'none';
+					tilePair[tilePair.length] = this;
+					if (tilePair.length == 2) {comparePrizes()}
+				}			
+			 	
+			 	
+			function showBoard()
+				{
+					var endpoint = (numRows * numCols)
+					var thistile
+					for (var i = 1; i <= endpoint; i++)
+						{
+						  thistile = document.getElementById('nt' + i)
+						  thistile.style.display = 'none'
+						  thistile.prize.style.display = 'none'
+						}
+					//clear out opponent's prize rack
+					var opponentPrizes = prizelists[(playeridx == 0) ? 1: 0]
+					if (opponentPrizes.childNodes)
+						{
+						 do {opponentPrizes.removeChild(opponentPrizes.lastChild)}
+						 while(opponentPrizes.childNodes.length > 0)
+						}
+				   //show explanation
+				   document.getElementById('explanation').firstChild.nodeValue = '(' + thisPuzzle.explanation +')'
+				}
+				
+				
+			 	
+			 function comparePrizes()
+			 	{
+			 		transferState = null; //reset the flag used for prize transfers
+			 		var match = (tilePair[0].prize.prizename == tilePair[1].prize.prizename) || (tilePair[0].prize.prizename == 'Wild')  || (tilePair[1].prize.prizename == 'Wild');
+			 		suppress = true //disallow clicking until we take action
+			 		var x = setTimeout("actOnMatch(" + match + ")",compareInterval)	
+			 		setMessage((match) ? 'That\'s correct' : 'Sorry, that\'s not a match')
+			 	}
+			 	
+			 	
+			function actOnMatch(match)
+			 	{
+			 		if (!doubleWild)
+			 			{
+						for (var i = 0; i < tilePair.length; i++) 
+							{
+								if (match) {tilePair[i].prize.style.display = 'none'}
+								else {tilePair[i].style.display = 'block'}
+							}
+						}
+			 		if(match)
+			 			{
+			 			   matchcount++;
+			 			   otheridx = (playeridx == 0) ? 1 : 0
+			 			   prizeWon = tilePair[0].prize.prizename;
+			 			   if (!doubleWild && tilePair[0].prize.prizename == 'Wild')//handle single Wild Card case where Wild Card is first number chosen.
+			 			   	{
+			 			   		prizeWon = tilePair[1].prize.prizename;
+			 			   	}
+			 				switch (prizeWon)
+			 					{
+			 						case 'Take':
+			 							{
+			 								if (prizeCount[otheridx] > 0)
+			 									{
+			 										setMessage(Players[playeridx] +', you may take one of ' + Players[otheridx] + '\'s prizes')
+													transferState = 'Take';
+			 									}
+			 								else
+			 									{
+			 										setMessage(Players[otheridx] +' has no prizes to take. Can you tell us what the puzzle says?');
+			 									}
+			 								break	;
+			 							}
+			 					   case 'Forfeit':
+			 							{
+			 								if (prizeCount[playeridx] > 0)
+			 									{
+			 										setMessage(Players[playeridx] +', you must give ' + Players[otheridx] + ' one of your prizes')
+													transferState = 'Forfeit';
+			 									}
+			 								else 
+			 									{
+			 										setMessage('You have no prizes to forfeit. Can you tell us what the puzzle says?');
+			 									}
+			 								break;
+			 							}
+			 						default: 
+			 							{
+			 								setMessage('Can you tell us what the puzzle says?');
+			 								addPrize(prizeWon);
+			 								break;
+			 							}
+			 					}
+			 				
+			 				showForm()
+			 			}
+			 		else
+			 			{
+			 				suppress = false;
+			 				playeridx = (playeridx == 0)? 1:0;
+			 				var y = setTimeout("setMessage('" + Players[playeridx] + ", your turn.'" + ")",responseInterval)}
+			 			
+			 		tilePair.length = 0
+			 		
+			 	}			 	
+			 	
+			
+			function showForm()
+				{
+					formDOMref.style.display = 'block'
+				} 				
+				
+			
+			function handleGuesses()
+				{
+					if (this.value =='OK')
+						{
+							var solutionString = formref.solution.value.replace(/\W/gi,'')
+							solutionString = solutionString.toLowerCase() //strip out non-alphabetical characters, and set to lower case, for less strict checking.
+							//alert(solutionString + '\n' + thisPuzzle.compareString)
+							if (solutionString == thisPuzzle.compareString)
+								{
+									showBoard();
+									setMessage('That\'s right! Congratulations!')
+									return false;
+								}
+								
+							else
+								{
+								setMessage('Sorry, that\'s incorrect. It\'s still your turn.');
+								formref.solution.value = '';
+								}
+						}
+				   else
+				   	{
+				   		setMessage(Players[playeridx] +', it\'s still your turn. Pick two more pieces of the puzzle.')
+				   		formref.solution.value = '';
+				   	}
+					formDOMref.style.display = 'none';
+					suppress = false
+					return false;
+				}
+			
+			
+		   
+		   //constructor function for each number tile
+			function Tile(row,col)
+				{
+					var temp = document.createElement("DIV");
+					temp.className = "number";
+					temp.number = (row * numCols) + (col + 1);
+					temp.style.top = row * adjTileHeight + 'px';
+					temp.style.left = col * adjTileWidth + 'px';
+					temp.setAttribute('id','nt' + temp.number)
+					var tmp = document.createTextNode(temp.number)
+					//temp.onclick = function(){this.style.display = 'none'};
+					temp.onclick = hideTile;
+					temp.appendChild(tmp)
+					container.appendChild(temp);
+					var thisgrid = document.createElement("DIV");
+					thisgrid.className = "grid";
+					thisgrid.style.top = row * adjTileHeight + 'px';
+					thisgrid.style.left = col * adjTileWidth + 'px';
+					container.appendChild(thisgrid)
+					return temp					
+				}
+			
+			
+			
+			//constructor function for each prize tile
+			function Prize(row,col)
+				{
+					var temp = document.createElement("DIV");
+					temp.className = "prize";
+					temp.number = (row * numCols) + (col + 1);
+					temp.style.top = row * adjTileHeight + 'px';
+					temp.style.left = col * adjTileWidth + 'px';
+					temp.setAttribute('id','p_' + temp.number)
+					
+					var tempinner = document.createElement("DIV");
+					tempinner.className = 'prizeinner'
+					temp.appendChild(tempinner)
+					
+					temp.prizename = prizeArray[temp.number - 1].prizename
+					if (temp.prizename == 'Take' || temp.prizename =='Forfeit')
+						{
+							var xdiv = document.createElement('DIV')
+							xdiv.className = 'transfer'
+							var xtmp = document.createTextNode(temp.prizename)
+							xdiv.appendChild(xtmp)
+							tempinner.appendChild(xdiv)
+							var tmp = document.createTextNode('One Gift')
+							tempinner.appendChild(tmp)
+						}
+					else if (temp.prizename == 'Wild')
+						{
+							tempinner.className = 'wildcard';
+							var tmp = document.createTextNode(temp.prizename)
+							tempinner.appendChild(tmp)
+							
+						}
+					else
+				   	{
+							var tmp = document.createTextNode(temp.prizename)
+							tempinner.appendChild(tmp)
+				   	}
+					
+					
+					container.appendChild(temp)
+					
+					return temp					
+				}
+				
+			
+		   
+		     
+		     
+		    function initialize()
+		    	{
+		    		if (playerform.player1name.value == '' || playerform.player2name.value == '')
+		    			{
+		    			 alert('Please enter a name for both players.');
+		    			 return false;
+		    			}
+		    		
+		    		Players[0] = playerform.player1name.value
+		    		Players[1] = playerform.player2name.value
+		    		
+					playerform.player1name.value = '';
+					playerform.player2name.value = '';
+		    		
+		    		document.getElementById('playerform').style.display = 'none';
+		    		document.getElementById('gamearea').style.display = 'block';
+		    		document.getElementById('contestants').style.display = 'block';
+		    		
+		    		//initialize the scoreboard
+				   var parentdiv,namediv,nametext,plist				  
+					for (i= 0; i < Players.length; i++)
+						{
+							parentdiv = document.getElementById('p' + i);//establish context
+							namediv = document.createElement('h2');//create the nametags
+							nametext = document.createTextNode(Players[i]);//put the names in them
+							
+							plist =  document.createElement('UL');//generate the lists for the prizes, put them in an array for easy reference, and add them to the DOM
+							prizelists[i] = plist
+							namediv.appendChild(nametext);parentdiv.appendChild(namediv);parentdiv.appendChild(plist)
+							
+						}
+					
+					
+					//initialize prizes
+					//Convert each of the "cool" prizes to an object, then sort.
+					for (var i = 0 ; i < coolPrizes.length; i++)
+						{
+							coolPrizes[i] =  new prizeObject(coolPrizes[i])
+						}
+					coolPrizes.sort(sortObjects)
+					//alert(coolPrizes.length)
+					
+					for (var i = 0 ; i < gagPrizes.length; i++)
+						{
+							gagPrizes[i] =  new prizeObject(gagPrizes[i])
+						}
+					gagPrizes.sort(sortObjects)
+					
+					for (var i = 0 ; i < utilPrizes.length; i++)
+						{
+							utilPrizes[i] =  new prizeObject(utilPrizes[i])
+						}
+					utilPrizes.sort(sortObjects)
+					
+					var rawPrizeArray = utilPrizes  //start with the utility prizes
+					for (cp = 0 ; cp < 10; cp++) {rawPrizeArray.push(coolPrizes[cp])}//pick off the first 10 cool prizes
+					for (gp = 0 ; gp < 2; gp++) {rawPrizeArray.push(gagPrizes[gp])}//pick off the first 2 gag prizes
+					
+					//loop through the raw prize array, and create two Prize objects for each prize name
+					
+					var prizelist = "";
+					for (var i = 0 ; i < rawPrizeArray.length; i++)
+						{
+							for ( var j = 0; j < 2; j++)
+								{
+									curridx = (i * 2) + j; 
+									prizeArray[curridx] = new prizeObject(rawPrizeArray[i].prizename)
+								}
+							prizelist += rawPrizeArray[i].prizename + '\n'
+						}
+					//sort the array according to the value of each element's rand property	
+					prizeArray.sort(sortObjects)
+								
+
+						
+				   //initialize game board. 
+					for (row = 0; row < numRows; row++)
+						{
+							for (col = 0; col < numCols; col++)
+							{
+								thisTile = new Tile(row,col);
+								//thisPrize = new Prize(row,col);
+								thisTile.prize= new Prize(row,col);
+							}
+						}
+						
+					rebus.style.display='block'
+					formref.solution.value = ''; //reset the solution field to blank
+					
+					//add event handlers to buttons
+					var puzzleButtons = formDOMref.getElementsByTagName('INPUT')
+					for (i = 0; i < puzzleButtons.length; i++)
+						{
+							if(puzzleButtons[i].type == 'submit') puzzleButtons[i].onclick = handleGuesses
+						}
+		   	
+					
+					
+					
+						
+					  setMessage(Players[0] + ', please begin the game by choosing two pieces of the puzzle.')
+		     
+		     
+		    		return false
+		    	}
+		   
+		   playerform.onsubmit = initialize
+		}//end master DOM check.
+
+
+</script>
+</body>
+</html>

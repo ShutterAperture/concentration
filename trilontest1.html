@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>trilon</title>
+	<style>
+		body {
+			color:#000; background:#FFF;
+			font: 1em Helvetica}
+		#board {
+			perspective:700px;
+			position:absolute;
+			left:100px; top: 20px;
+			width: 500px; height:600px;
+		}
+		.trilon {
+			position:absolute;
+			left:100px; top: 20px;
+			width:98px; height:63px; 
+			
+			transform-style:preserve-3d;
+			transform: rotateX(40deg)
+			}
+
+		.trilon div {
+			position:absolute;
+			width:inherit; height:inherit;
+			vertical-align:middle; text-align:center;       opacity:.65;
+			border:1px solid #000}
+
+		.num {
+			background:#DB0000 url(images/numbertile2.gif) no-repeat; color:#FFF;
+			font: normal 25px/60px Impact,Geneva,sans-serif;
+			cursor:pointer}
+		.prize{
+			display:table-cell; vertical-align:middle; 
+			color:#FFF; background:#600;
+			transform: translateX(-50px) rotateY(120deg)
+			}
+		.pzl {transform: translateX(50px) rotateY(-120deg)}
+		
+		
+		.box {width:100px; height:100px;
+			background: #0Af;
+			background: linear-gradient(to bottom, #0Af, #06b);
+			border: 1px solid #0CF;
+			
+			-webkit-transform: scale(.5);
+			transform: scale(.5);			
+			}
+			
+		.indicator {display:inline-block; width: 6em;
+			background: #000; color:#FFF;}
+			
+		.scene {
+			position:absolute;
+			top:200px; left:300px;
+			width:800px; height:800px;	
+			perspective: 600px;
+			perspective-origin: 10% 10%;
+			background:lime;
+			}	
+		.cube {
+			position:absolute;
+			top:140px; left:60px;
+			width:200px; height:200px;			
+   			transform-style: preserve-3d;
+			}
+		
+		.cube .face {
+			position:absolute;
+			width:inherit; height:inherit;
+			opacity:.6;
+			text-align: left;
+			vertical-align: middle;
+			color:#FFF;
+			font-weight:bold;}
+			
+		 .cube .front {
+		 	background:blue;
+		 	transform: translateZ(100px);
+		 	}
+		 	
+		 .cube .back {
+		 	background:purple;
+		 	transform: translateZ(-100px) rotateY(180deg)
+		 	}
+		 .cube .left {
+		 	background:orange;
+		 	transform:translateX(-100px) rotateY(-90deg);
+		 	}
+		 .cube .right {
+		 	background:green;
+		 	transform: translateX(100px) rotateY(90deg)}
+		
+	</style>
+	<script src="jquery-1.11.1.min.js"></script>
+
+</head>
+<body>
+	<div id="board">
+		<div class="trilon" data-state="">
+			<div class="num">1</div>
+			<div class="prize">iPhone 5c</div>
+			<div class="pzl">piece</div>	
+		</div>
+	</div>
+	
+	<div class="box" id="testbox"></div>
+	<div class="scene">
+		<div class="cube">
+			<div class="face front">Front</div>
+			<div class="face back">Back</div>
+			<div class="face left">Left</div>
+			<div class="face right">right</div>	
+		</div>
+	</div>
+	
+	<form>
+		<label for="rotator" >Rotation</label>: <span id="rotindicator" class="indicator">0 degrees</span><input name="rotator" value="0" id="rotator" type="range" min="-360" max="360">
+	</form>
+	
+	
+	
+	<script>
+		var $rotator = $('#rotator')
+		var $rotatebox = $('#testbox')
+		//alert(rotatebox)
+		var $rotindicator = $('#rotindicator')
+		
+		$rotator.change( function() {
+			var rotval = this.value;
+			$rotindicator.text(rotval + ' degrees')
+			var transformstring = 'scale(.5) rotate(' + rotval + 'deg)'
+			
+			//rotatebox.style.transform = transformstring;
+			$rotatebox.css('transform',transformstring)
+			
+			
+			}
+			
+			)
+	</script>
+
+	
+
+
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>trilon</title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+	<style>
+		body {
+			color:#000; background:#FFF;
+			font: 1em Helvetica}
+		#board {
+			perspective:700px;
+			-webkit-perspective:700px;
+			position:absolute;
+			left:100px; top: 40px;
+			background:#DDD;
+			border:1px solid #797979;
+			width: 500px; height: 390px;
+		}
+		.trilon {
+			position:absolute;
+			left:250px; top: 250px;
+			width:98px; height:63px; 			
+			transform-style:preserve-3d;
+			-webkit-transform-style:preserve-3d;
+			transition: transform 1.5s;
+			-webkit-transition: -webkit-transform 1.5s;
+			transform: translateZ(-28.9px);
+			-webkit-transform: translateZ(-28.9px);
+			}
+		 #p1 {left:1px; top: 250px;}
+		 #p2 {left:101px; top: 250px;}
+		 #p3 {left:201px; top: 250px;}
+		 #p4 {left:301px; top: 250px;}
+		
+		.trilon[data-state='prize'] {
+			transform: translateZ(-28.9px) rotateY(-120deg);
+			-webkit-transform: translateZ(-28.9px) rotateY(-120deg);	
+			
+			}
+		 .trilon[data-state='pzl'] {
+			transform: translateZ(-28.9px) rotateY(-240deg);
+			-webkit-transform: translateZ(-28.9px) rotateY(-240deg);
+			
+			}
+
+		.trilon .face {
+			position:absolute;
+			cursor:pointer;
+			width:inherit; height:inherit;
+			vertical-align:middle; text-align:center;      
+			border:1px solid #000;
+			backface-visibility:visible}
+
+		.num {
+			background:#DEBE4E;				
+			transform: translateZ(28.9px);;
+			-webkit-transform: translateZ(28.9px);
+			}
+		.num .inner {margin: 12px 16px; height:39px;
+			font: 700 1.6em  'Open Sans', sans-serif;
+			line-height:1.4;
+			background:#A3211B; color:#FFF}
+		.prize{
+			transform:  rotateY(120deg) translateZ(28.9px);
+			-webkit-transform:  rotateY(120deg) translateZ(28.9px);
+			}
+		.prize .inner {display:table-cell; vertical-align:middle; 
+			width:inherit; height:inherit;
+			font: 300 1em  'Open Sans', sans-serif;
+			color:#FFF; background:#000;}
+		.pzl {
+			background:#FFF;
+			color:#000;
+			transform:  rotateY(-120deg) translateZ(28.9px);
+			-webkit-transform:  rotateY(-120deg) translateZ(28.9px);
+			}
+		
+		
+		
+		
+	</style>
+	<script src="jquery-1.11.1.min.js"></script>
+
+</head>
+<body>
+	<div id="board">
+		<div class="trilon" data-state="" id="p1">
+			<div class="face num"><div class="inner">1</div></div>
+			<div class="face prize"><div class="inner">iPhone 5c</div></div>
+			<div class="face pzl">piece</div>	
+		</div>
+		<div class="trilon" data-state="" id="p2">
+			<div class="face num"><div class="inner">2</div></div>
+			<div class="face prize"><div class="inner">iPhone 5c</div></div>
+			<div class="face pzl">piece</div>	
+		</div>
+		<div class="trilon" data-state="" id="p3">
+			<div class="face num"><div class="inner">3</div></div>
+			<div class="face prize"><div class="inner">iPhone 5c</div></div>
+			<div class="face pzl">piece</div>	
+		</div>
+		<div class="trilon" data-state="" id="p4">
+			<div class="face num"><div class="inner">4</div></div>
+			<div class="face prize"><div class="inner">iPhone 5c</div></div>
+			<div class="face pzl">piece</div>	
+		</div>
+	</div>
+	
+	<form autocomplete="off">
+		<input type="radio" name="face" value="num" id="face-0" checked><label for="face-0">Number</label>
+		<input type="radio" name="face" value="prize" id="face-1"><label for="face-1">Prize</label>
+		<input type="radio" name="face" value="pzl" id="face-2"><label for="face-2">Puzzle</label>
+	
+	</form>
+
+	
+	
+	
+	
+	
+	<script>
+		var $facebtns = $('[type="radio"]')
+		var $trilon = $('#p2')
+		$facebtns.click( function()
+							{
+								//alert(this.value)
+								$trilon.attr('data-state',this.value)
+							})
+	</script>
+
+	
+
+
+
+</body>
+</html>

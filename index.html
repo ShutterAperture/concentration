@@ -1,0 +1,85 @@
+﻿<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Concentration</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<script src="jquery-1.11.1.min.js"></script>
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+	<link href="concentration.css" rel="stylesheet">
+
+</head>
+<body>
+<h1><div><a href="http://tedohara.net">Ted O'Hara.net</a> presents..</div><span>Concentration</span></h1>
+<!-- Name Entry Form	 -->
+<form id="playerform" action="index.html" method="post" name="playerform">
+	<p>This is a reproduction of <em>Concentration</em>, which  ran on NBC from the late 50's to 1973. The object of the game is to figure out what the puzzle means.
+	   You expose puzzle pieces by matching prizes. Each match reveals a pair of pieces.</p>
+	   
+	   <p> In this version, you can play single handed, or play with an opponent.</p>
+	<div id="one-player">
+		<h2>Play Single Handed</h2>
+		<input type="submit" name="playersubmit" id="playersubmit" value ="Play Game" onclick="singleMode=true">  
+	</div>
+
+	<div id="two-player">
+		<h2>Play with 2 players</h2>
+		<div>
+			<label for="player1name">Player 1 Name</label>
+			<input type="text" name="player1name" id="player1name" size="20" maxlength="20" tabindex="1" placeholder="Player 1">			
+		</div>
+		<div>
+			<label for="player2name">Player 2 Name</label>
+			<input type="text" name="player2name" id="player2name" size="20" maxlength="20" tabindex="2" placeholder="Player 2">  		
+		</div>
+		<div>
+			<input type="submit" name="playersubmit" id="playersubmit" value ="Play Game" onclick="singleMode=false">  		
+		</div>
+	</div>  
+</form>
+
+<!-- Main game area -->
+<div id="game-set">
+	<div id="gamearea">
+		<div id="gameboard">
+		<div id="board"></div>
+		</div>
+
+		<p id="message">&nbsp;</p>
+
+		<form name="puzzleform" id="puzzleform" method="get" action="index.html">
+			<div>		
+				<input type="text" name="solution" id="solution" size="55">	
+				<input type="submit" value="OK">		
+				<input type="submit" value="No" id="nobtn">
+			</div>
+		</form>
+		
+		<form name="endform" id="endform" method="get" action="index.html">
+			<div>		
+				<input type="submit" value="OK" id="pickPlayer0" data-playeridx="0">		
+				<input type="submit" value="No" id="pickPlayer1" data-playeridx="1">
+			</div>
+		</form>
+
+		<p id="explanation">&nbsp;</p>
+		
+	</div><!-- end, game board area -->
+
+
+
+	<div id="contestants">
+		<div id="scoreboard">
+	
+		</div><!-- end, scoreboard -->
+		<div id="playagain-div" class="inner">
+		<a id="playagain" class="btn">Play Again</a>
+		</div>
+	</div><!-- end, contestants area -->
+	<a id="giveup" class="btn">End Game</a>
+</div><!-- end, game set -->
+
+ 
+
+<script type="text/javascript" src="concentration.js"></script>
+</body>
+</html>
